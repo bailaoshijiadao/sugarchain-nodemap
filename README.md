@@ -44,10 +44,8 @@ To install Node Map, follow these steps:
    ```html
    <script src="https://maps.googleapis.com/maps/api/js?key=<YOUR_GOOGLEMAPS_API_KEY>&callback=initMap" async defer></script>
    ```
-5. Add your IPinfo token and RPC Client Settings to the `app.js` file:
+5. Add RPC Client Settings and your IPinfo token to the `app.js` file:
    ```app.js
-   const ipInfoToken = 'YOUR_IPINFO_TOKEN';
-   
    const client = new Client({
    host: '127.0.0.1', // RPC Server address
    port: 8333, // RPC Server port
@@ -56,6 +54,8 @@ To install Node Map, follow these steps:
    ssl: false, // Enable SSL
    timeout: 30000 // Setting timeout seconds
    });
+
+   const ipInfoToken = 'YOUR_IPINFO_TOKEN';
    ```
 
 ## Using Node Map
