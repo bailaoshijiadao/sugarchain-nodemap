@@ -1,0 +1,35 @@
+{
+    "name": "nodemap",
+    "version": "0.0.1",
+    "description": "cryptocurrency geoip geolocation node map node.js javascript",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "test": "npm test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ROZ-MOFUMOFU-ME/nodemap.git"
+    },
+    "keywords": [
+        "cryptocurrency",
+        "geoip",
+        "geolocation",
+        "node",
+        "map",
+        "node.js",
+        "javascript"
+    ],
+    "author": "ROZ-MOFUMOFU-ME",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ROZ-MOFUMOFU-ME/nodemap/issues"
+    },
+    "homepage": "https://github.com/ROZ-MOFUMOFU-ME/nodemap",
+    "dependencies": {
+        "bitcoin-core": "^4.2.0",
+        "axios": "^1.6.8",
+        "express": "^4.19.2"
+    },
+    "devDependencies": {}
+}

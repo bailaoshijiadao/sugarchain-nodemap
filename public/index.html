@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Node Information</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
+        integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        .box {
+            width: 90%;
+            margin: 10px auto;
+            background-color: #ddd;
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        .header,
+        .content {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #map {
+            height: 500px;
+            width: 95%;
+            margin: 20px auto;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .pure-table {
+            width: 95%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+        }
+
+        .pure-table th,
+        .pure-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+
+        .pure-table th {
+            background-color: #ccc;
+            color: #333;
+        }
+
+        .pure-table td {
+            background-color: #ffffff;
+        }
+
+        .text-light {
+            color: #bbb;
+        }
+
+        h2 {
+            color: #333;
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<YOUR_GOOGLEMAPS_API_KEY>&callback=initMap" async
+        defer></script>
+    <script>
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 2,
+                center: { lat: 0, lng: 0 }
+            });
+
+            fetch('/peer-locations')
+                .then(response => response.json())
+                .then(peers => {
+                    const table = document.getElementById('peerTableBody');
+                    table.innerHTML = '';
+                    peers.forEach(peer => {
+                        const row = table.insertRow();
+                        const ipCell = row.insertCell();
+                        const userAgentCell = row.insertCell();
+                        const blockHeightCell = row.insertCell();
+                        const countryCell = row.insertCell();
+                        const cityCell = row.insertCell();
+                        const orgCell = row.insertCell();
+
+                        ipCell.innerHTML = peer.ip.replace('\n', '<br>');
+                        userAgentCell.innerHTML = peer.userAgent.replace('\n', '<br>');
+                        blockHeightCell.textContent = peer.blockHeight;
+                        countryCell.innerHTML = peer.country.replace('\n', '<br>');
+                        cityCell.innerHTML = peer.city.replace('\n', '<br>');
+                        orgCell.innerHTML = peer.org;
+
+                        if (peer.location) {
+                            var latLng = {
+                                lat: parseFloat(peer.location[0]),
+                                lng: parseFloat(peer.location[1])
+                            };
+                            new google.maps.Marker({
+                                position: latLng,
+                                map: map,
+                                title: peer.ip
+                            });
+                        }
+                    });
+                });
+        }
+    </script>
+</head>
+
+<body onload="initMap()">
+    <div class="pure-g">
+        <div class="pure-u-1 header box">
+            <h2>Node Map</h2>
+            <div id="map"></div>
+        </div>
+        <div class="pure-u-1 content box">
+            <h2>Nodes Information</h2>
+            <table class="pure-table">
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>User Agent</th>
+                        <th>Height</th>
+                        <th>Country</th>
+                        <th>Location</th>
+                        <th>Network</th>
+                    </tr>
+                </thead>
+                <tbody id="peerTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
