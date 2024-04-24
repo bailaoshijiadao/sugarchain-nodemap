@@ -2,7 +2,7 @@
 
 ![initial](https://github.com/ROZ-MOFUMOFU-ME/nodemap/assets/35634920/63cfb18c-bf18-4a42-abeb-7c019b7b3aa3)
 
-This project provides a web application for displaying information about cryptocurrensy coin daemon nodes using RPC. It visualizes node data on a Google Map and displays detailed information in a table format. The project is built with Node.js and uses PureCSS for styling.
+This project provides a web application for displaying information about cryptocurrency coin daemon nodes using RPC. It visualizes node data on a Google Map and displays detailed information in a table format. The project is built with Node.js and uses PureCSS for styling.
 
 ## Features
 
@@ -10,10 +10,10 @@ This project provides a web application for displaying information about cryptoc
 - Detailed table view showing:
   - IP address and Reverse DNS
   - User agent (Wallet Version)
-  - Block height
-  - Country
-  - Location (City)
-  - Network details
+  - Coin Block height
+  - Country and Timezone
+  - Location (City, States)
+  - Network details, ASN
 
 ## Prerequisites
 
