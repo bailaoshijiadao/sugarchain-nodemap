@@ -4,16 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Node Information</title>
+    <title>Node Map</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
         integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            margin: 0;
+            margin: 0 auto;
             padding: 0;
+            display: flex;
+            flex-direction: column;
             background-color: #f7f7f7;
+            max-width: 1440px;
         }
 
         .box {
@@ -67,6 +71,24 @@
 
         h2 {
             color: #333;
+        }
+
+        footer {
+            text-align: center;
+            color: #646464;
+            text-decoration: none;
+            font-size: 0.9em;
+            padding: 15px;
+            line-height: 24px;
+        }
+
+        footer a {
+            color: #000000;
+            text-decoration: none;
+        }
+
+        footer iframe {
+            vertical-align: middle;
         }
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?key=<YOUR_GOOGLEMAPS_API_KEY>&callback=initMap" async
@@ -140,5 +162,28 @@
         </div>
     </div>
 </body>
+<footer>
+    <div>
+        This site is powered by <a target="_blank" href="https://github.com/ROZ-MOFUMOFU-ME/nodemap">nodemap</a>
+        project created by <a target="_blank" href="https://github.com/ROZ-MOFUMOFU-ME">ROZ</a> originality and is
+        licensed under the <a href="https://en.wikipedia.org/wiki/MIT_License">MIT License</a>.&nbsp;&nbsp;
+        Contact:&nbsp;&nbsp;
+        <a target="_blank" href="https://twitter.com/ROZ_mofumofu_me"><i class="fab fa-x-twitter fa-fw"></i></a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a href="mailto:mail@mofumofu.me"><i class="fas fa-envelope fa-fw"></i></a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a target="_blank" href="https://discord.gg/zHUdQy2NzU"><i class="fab fa-discord fa-fw"></i></a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <a target="_blank" href="https://github.com/ROZ-MOFUMOFU-ME"><i class="fab fa-github fa-fw"></i></a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <iframe src="https://ghbtns.com/github-btn.html?user=ROZ-MOFUMOFU-ME&repo=nodemap&type=star&count=true"
+            frameborder="0" scrolling="0" width="150" height="20"></iframe><br>
+        <i
+            class="fas fa-heart fa-fw"></i>&nbsp;&nbsp;Donating&nbsp;BTC:&nbsp;3FpbJ5cotwPZQn9fcdZrPv4h72XquzEvez&nbsp;&nbsp;ETH:
+        0xc664a0416c23b1b13a18e86cb5fdd1007be375ae&nbsp;&nbsp;LTC: Lh96WZ7Rw9Wf4GDX2KXpzieneZFV5Xe5ou<br>
+        BCH: pzdsppue8uwc20x35psaqq8sgchkenr49c0qxzazxu&nbsp;&nbsp;ETC:
+        0xc664a0416c23b1b13a18e86cb5fdd1007be375ae&nbsp;&nbsp;MONA: MLEqE3vi11j4ZguMjkvMn5rUtze6kXbAzQ
+    </div>
+</footer>
 
 </html>
