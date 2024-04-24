@@ -1,5 +1,7 @@
 # Node Map
 
+![initial](https://github.com/ROZ-MOFUMOFU-ME/nodemap/assets/35634920/c228d968-9ad4-476e-a320-3e6e09bcea3d)
+
 This project provides a web application for displaying information about cryptocurrensy coin daemon nodes. It visualizes node data on a Google Map and displays detailed information in a table format. The project is built with Node.js and uses PureCSS for styling.
 
 ## Features
