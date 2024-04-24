@@ -18,11 +18,11 @@ This project provides a web application for displaying information about cryptoc
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
-- You have installed Node.js and npm.
+- You have installed Node.js 12+ and npm 6+.
 - You have a basic understanding of JavaScript and Node.js.
 - You have a IPinfo.io token or something else.
 - You have a Google Maps API key.
-- You have a Reverse Proxy. (Recommend Nginx) 
+- You have a Reverse Proxy. (Recommend Nginx)
 
 ## Installing Node Map
 
@@ -40,7 +40,7 @@ To install Node Map, follow these steps:
    ```bash
    npm install
    ```
-4. Add your Google Maps API key to the `index.html` file:
+4. Add your Google Maps API key to the `public/index.html` file:
    ```html
    <script src="https://maps.googleapis.com/maps/api/js?key=<YOUR_GOOGLEMAPS_API_KEY>&callback=initMap" async defer></script>
    ```
