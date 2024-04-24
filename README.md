@@ -42,7 +42,7 @@ To install Node Map, follow these steps:
    ```
 4. Add your Google Maps API key to the `index.html` file:
    ```html
-   <script src="https://maps.googleapis.com/maps/api/js?key=<YOUR_GOOGLEMAPS_API_KEY&callback=initMap" async defer></script>
+   <script src="https://maps.googleapis.com/maps/api/js?key=<YOUR_GOOGLEMAPS_API_KEY>&callback=initMap" async defer></script>
    ```
 
 ## Using Node Map
