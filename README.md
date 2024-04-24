@@ -1,6 +1,6 @@
 # Node Map
 
-![initial](https://github.com/ROZ-MOFUMOFU-ME/nodemap/assets/35634920/c228d968-9ad4-476e-a320-3e6e09bcea3d)
+![initial](https://github.com/ROZ-MOFUMOFU-ME/nodemap/assets/35634920/63cfb18c-bf18-4a42-abeb-7c019b7b3aa3)
 
 This project provides a web application for displaying information about cryptocurrensy coin daemon nodes using RPC. It visualizes node data on a Google Map and displays detailed information in a table format. The project is built with Node.js and uses PureCSS for styling.
 
