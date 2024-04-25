@@ -1,26 +1,13 @@
-import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import app from '../app.js';
-import http from 'http';
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const app = require('../app');
 
 chai.use(chaiHttp);
-const { expect } = chai;
-let server;
+const expect = chai.expect;
 
 describe('Node Map API', () => {
-    before(done => {
-        server = app.listen(3000, () => {
-            console.log('Server running on port 3000');
-            done();
-        });
-    });
-
-    after(done => {
-        server.close(done);
-    });
-
-    it('should GET /peer-locations successfully', done => {
-        chai.request(server)
+    it('should GET /peer-locations successfully', (done) => {
+        chai.request(app)
             .get('/peer-locations')
             .end((err, res) => {
                 expect(res).to.have.status(200);
