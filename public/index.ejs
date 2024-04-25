@@ -91,12 +91,13 @@
             vertical-align: middle;
         }
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap&libraries=marker" async defer></script>
     <script>
         function initMap() {
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 2,
-                center: { lat: 0, lng: 0 }
+                center: { lat: 0, lng: 0 },
+                mapId: "DEMO_MAP_ID"
             });
 
             fetch('/peer-locations')
@@ -125,7 +126,7 @@
                                 lat: parseFloat(peer.location[0]),
                                 lng: parseFloat(peer.location[1])
                             };
-                            new google.maps.Marker({
+                            new google.maps.marker.AdvancedMarkerElement({
                                 position: latLng,
                                 map: map,
                                 title: peer.ip
