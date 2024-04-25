@@ -1,7 +1,6 @@
 import express from 'express';
 import axios from 'axios';
-import pkg from 'bitcoin-core';
-const { Client } = pkg;
+import Client from 'bitcoin-core';
 
 const app = express();
 export default app;
