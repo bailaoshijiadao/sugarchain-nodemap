@@ -1,14 +1,9 @@
 import express from 'express';
-import { Client } from 'bitcoin-core';
 import axios from 'axios';
-import { promises as dns } from 'dns';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import pkg from 'bitcoin-core';
+const { Client } = pkg;
 
 const app = express();
-
 const client = new Client({
     host: process.env.DAEMON_RPC_HOST || '127.0.0.1',
     port: process.env.DAEMON_RPC_PORT || 8333,
