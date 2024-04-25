@@ -13,6 +13,7 @@ const port = process.env.PORT || 3000;
 
 // Setup cache with a standard TTL of 600 seconds (10 minutes)
 const cache = new NodeCache({ stdTTL: 600 });
+let lastCacheUpdateTime = null;
 
 // Validates that all necessary environment variables are set
 if (!process.env.DAEMON_RPC_HOST || !process.env.IPINFO_TOKEN || !process.env.GOOGLE_MAPS_API_KEY) {
@@ -54,7 +55,7 @@ async function getGeoLocation(ip) {
     const cacheKey = `geo:${ip}`;
     const cachedData = cache.get(cacheKey);
     if (cachedData) return cachedData;
-    
+
     try {
         const cleanIp = ip.replace(/\[|\]/g, '');
         const encodedIP = encodeURIComponent(cleanIp);
@@ -75,7 +76,7 @@ async function reverseDnsLookup(ip) {
     const cacheKey = `dns:${ip}`;
     const cachedData = cache.get(cacheKey);
     if (cachedData) return cachedData;
-    
+
     try {
         const hostnames = await dns.reverse(ip);
         cache.set(cacheKey, hostnames[0]);
@@ -87,12 +88,8 @@ async function reverseDnsLookup(ip) {
 }
 
 // Endpoint to serve peer location data
-app.get('/peer-locations', async (req, res) => {
+async function fetchAndCachePeerLocations() {
     try {
-        const cacheKey = 'peer-locations';
-        const cachedLocations = cache.get(cacheKey);
-        if (cachedLocations) return res.json(cachedLocations);
-
         const peers = await client.command('getpeerinfo');
         const locations = [];
 
@@ -105,6 +102,7 @@ app.get('/peer-locations', async (req, res) => {
             }
 
             const geoInfo = await getGeoLocation(ip) || {};
+            const dnsLookup = await reverseDnsLookup(ip) || '';
             locations.push({
                 ip: ip + '<br><span class="text-light">' + (await reverseDnsLookup(ip) + '</span>' || ''),
                 userAgent: peer.subver + '<br><span class="text-light">' + peer.version + '</span>',
@@ -118,11 +116,27 @@ app.get('/peer-locations', async (req, res) => {
             });
         }
 
-        cache.set(cacheKey, locations);
-        res.json(locations);
+        cache.set('peer-locations', locations);
+        lastCacheUpdateTime = new Date();
+        console.log(`Peer locations updated and cached at ${lastCacheUpdateTime}.`)
     } catch (error) {
         console.error('Failed to fetch peer locations:', error);
-        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+};
+
+// Set an interval to refresh the cache every 10 minutes
+setInterval(fetchAndCachePeerLocations, 600000);
+
+// Initial fetch and cache when the server starts
+fetchAndCachePeerLocations();
+
+// Configure express app and routes...
+app.get('/peer-locations', async (req, res) => {
+    const cachedLocations = cache.get('peer-locations');
+    if (cachedLocations) {
+        res.json(cachedLocations);
+    } else {
+        res.status(500).json({ error: 'Failed to retrieve peer locations from cache', details: error.message });
     }
 });
 
