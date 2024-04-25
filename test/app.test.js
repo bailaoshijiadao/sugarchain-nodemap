@@ -1,17 +1,25 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const app = require('../app');
+async function setupChai() {
+  const chai = await import('chai');
+  const chaiHttp = await import('chai-http');
+  chai.default.use(chaiHttp.default);
+  return chai;
+}
 
-chai.use(chaiHttp);
-const expect = chai.expect;
+describe('Node Map API', function () {
+  let chai;
+  let expect;
 
-describe('Node Map API', () => {
-    it('should GET /peer-locations successfully', (done) => {
-        chai.request(app)
-            .get('/peer-locations')
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                done();
-            });
-    });
+  before(async function () {
+    chai = await setupChai();
+    expect = chai.default.expect;
+  });
+
+  it('should GET /peer-locations successfully', function (done) {
+    chai.default.request(require('../app'))
+      .get('/peer-locations')
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
 });
