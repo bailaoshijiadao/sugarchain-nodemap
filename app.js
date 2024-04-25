@@ -14,10 +14,10 @@ const client = new Client({
 
 const ipInfoToken = process.env.IPINFO_TOKEN;
 
-client.command('getpeerinfo').then((response) => {
+client.command('getpeerinfo').then(response => {
     console.log(response);
-}).catch((error) => {
-    console.error('Error accessing bitcoind:', error);
+}).catch(error => {
+    console.error('Error accessing coind:', error);
 });
 
 function extractIp(address) {
