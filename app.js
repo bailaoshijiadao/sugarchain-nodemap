@@ -1,24 +1,23 @@
 const express = require('express');
+const Client = require('bitcoin-core');
 const axios = require('axios');
-const Client = require('bitcoin-core').Client;
-
 const app = express();
 
 const client = new Client({
-    host: process.env.DAEMON_RPC_HOST || '127.0.0.1',
-    port: process.env.DAEMON_RPC_PORT || 8333,
-    username: process.env.DAEMON_RPC_USERNAME,
-    password: process.env.DAEMON_RPC_PASSWORD,
+    host: '127.0.0.1',
+    port: 8333,
+    username: 'USERNAME',
+    password: 'PASSWORD',
     ssl: false,
     timeout: 30000
 });
 
-const ipInfoToken = process.env.IPINFO_TOKEN;
+const ipInfoToken = 'YOUR_IPINFO_TOKEN';
 
-client.command('getpeerinfo').then(response => {
+client.command('getpeerinfo').then((response) => {
     console.log(response);
-}).catch(error => {
-    console.error('Error accessing coind:', error);
+}).catch((error) => {
+    console.error('Error accessing bitcoind:', error);
 });
 
 function extractIp(address) {
@@ -77,6 +76,8 @@ async function reverseDnsLookup(ip) {
         return '';
     }
 }
+
+const path = require('path');
 
 app.use(express.static('public'));
 

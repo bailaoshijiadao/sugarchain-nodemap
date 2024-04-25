@@ -2,7 +2,7 @@
 
 ![initial](https://github.com/ROZ-MOFUMOFU-ME/nodemap/assets/35634920/63cfb18c-bf18-4a42-abeb-7c019b7b3aa3)
 
-This project provides a web application for displaying information about cryptocurrency coin daemon nodes using RPC. It visualizes node data on a Google Map and displays detailed information in a table format. The project is built with Node.js and uses PureCSS for styling.
+This project provides a web application for displaying information about cryptocurrensy coin daemon nodes using RPC. It visualizes node data on a Google Map and displays detailed information in a table format. The project is built with Node.js and uses PureCSS for styling.
 
 ## Features
 
@@ -10,10 +10,10 @@ This project provides a web application for displaying information about cryptoc
 - Detailed table view showing:
   - IP address and Reverse DNS
   - User agent (Wallet Version)
-  - Coin Block height
-  - Country and Timezone
-  - Location (City, States)
-  - Network details, ASN
+  - Block height
+  - Country
+  - Location (City)
+  - Network details
 
 ## Prerequisites
 
@@ -43,19 +43,6 @@ To install Node Map, follow these steps:
 4. Add your Google Maps API key to the `public/index.html` file:
    ```html
    <script src="https://maps.googleapis.com/maps/api/js?key=<YOUR_GOOGLEMAPS_API_KEY>&callback=initMap" async defer></script>
-   ```
-5. Add RPC Client Settings and your IPinfo token to the `app.js` file:
-   ```app.js
-   const client = new Client({
-   host: '127.0.0.1', // RPC Server address
-   port: 8333, // RPC Server port
-   username: 'USERNAME', // RPC username
-   password: 'PASSWORD', // RPC password
-   ssl: false, // Enable SSL
-   timeout: 30000 // Setting timeout seconds
-   });
-
-   const ipInfoToken = 'YOUR_IPINFO_TOKEN';
    ```
 
 ## Using Node Map
