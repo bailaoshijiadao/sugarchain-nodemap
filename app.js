@@ -1,18 +1,22 @@
 const express = require('express');
 const Client = require('bitcoin-core');
 const axios = require('axios');
+const dotenv = require('dotenv');
+
+dotenv.config();
 const app = express();
+const port = process.env.PORT || 3000;
 
 const client = new Client({
-    host: '127.0.0.1',
-    port: 8333,
-    username: 'USERNAME',
-    password: 'PASSWORD',
-    ssl: false,
-    timeout: 30000
+    host: process.env.DAEMON_RPC_HOST,
+    port: process.env.DAEMON_RPC_PORT,
+    username: process.env.DAEMON_RPC_USERNAME,
+    password: process.env.DAEMON_RPC_PASSWORD,
+    ssl: process.env.DAEMON_RPC_SSL === 'true',
+    timeout: parseInt(process.env.DAEMON_RPC_TIMEOUT || '30000')
 });
 
-const ipInfoToken = 'YOUR_IPINFO_TOKEN';
+const ipInfoToken = process.env.IPINFO_TOKEN;
 
 client.command('getpeerinfo').then((response) => {
     console.log(response);
@@ -85,7 +89,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
