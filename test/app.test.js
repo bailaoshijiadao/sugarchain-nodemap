@@ -1,5 +1,7 @@
-import chai from 'chai';
+import * as chai from 'chai';
+const expect = chai.expect;
 import chaiHttp from 'chai-http';
+chai.use(chaiHttp);
 import app from '../app.js';
 
 chai.use(chaiHttp);
