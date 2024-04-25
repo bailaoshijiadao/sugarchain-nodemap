@@ -3,7 +3,6 @@ import axios from 'axios';
 import Client from 'bitcoin-core';
 
 const app = express();
-export default app;
 
 const client = new Client({
     host: process.env.DAEMON_RPC_HOST || '127.0.0.1',
@@ -89,3 +88,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+export default app;
