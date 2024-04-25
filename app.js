@@ -1,6 +1,6 @@
-import express from 'express';
-import axios from 'axios';
-import Client from 'bitcoin-core';
+const express = require('express');
+const axios = require('axios');
+const Client = require('bitcoin-core').Client;
 
 const app = express();
 
@@ -89,4 +89,4 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-export default app;
+module.exports = app;
