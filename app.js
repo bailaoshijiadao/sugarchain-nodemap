@@ -4,15 +4,15 @@ const axios = require('axios');
 const app = express();
 
 const client = new Client({
-    host: '127.0.0.1',
-    port: 8333,
-    username: 'USERNAME',
-    password: 'PASSWORD',
+    host: process.env.DAEMON_RPC_HOST || '127.0.0.1',
+    port: process.env.DAEMON_RPC_PORT || 8333,
+    username: process.env.DAEMON_RPC_USERNAME,
+    password: process.env.DAEMON_RPC_PASSWORD,
     ssl: false,
     timeout: 30000
 });
 
-const ipInfoToken = 'YOUR_IPINFO_TOKEN';
+const ipInfoToken = process.env.IPINFO_TOKEN;
 
 client.command('getpeerinfo').then((response) => {
     console.log(response);
