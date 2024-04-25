@@ -44,18 +44,21 @@ To install Node Map, follow these steps:
    ```html
    <script src="https://maps.googleapis.com/maps/api/js?key=<YOUR_GOOGLEMAPS_API_KEY>&callback=initMap" async defer></script>
    ```
-5. Add RPC Client Settings and your IPinfo token to the `app.js` file:
+5. Add RPC Client Settings and your IPinfo token to the `.env` file:
    ```app.js
-   const client = new Client({
-   host: '127.0.0.1', // RPC Server address
-   port: 8333, // RPC Server port
-   username: 'USERNAME', // RPC username
-   password: 'PASSWORD', // RPC password
-   ssl: false, // Enable SSL
-   timeout: 30000 // Setting timeout seconds
-   });
+   # RPC server settings
+   DAEMON_RPC_HOST=127.0.0.1
+   DAEMON_RPC_PORT=8333
+   DAEMON_RPC_USERNAME=your_username
+   DAEMON_RPC_PASSWORD=your_password
+   DAEMON_RPC_SSL=false
+   DAEMON_RPC_TIMEOUT=30000
 
-   const ipInfoToken = 'YOUR_IPINFO_TOKEN';
+   # IPinfo.io token
+   IPINFO_TOKEN=your_ipinfo_token
+
+   # Node Map server port
+   PORT=3000
    ```
 
 ## Using Node Map
