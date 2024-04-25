@@ -9,17 +9,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x, 18.x, 20.x]
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: npm install
-      - run: npm start
-      - run: echo "CI process completed successfully."
+    - uses: actions/checkout@v3
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm install
+    - run: npm test
+    env:
+      BITCOIN_CORE_HOST: ${{ secrets.BITCOIN_CORE_HOST }}
+      BITCOIN_CORE_PORT: ${{ secrets.BITCOIN_CORE_PORT }}
+      BITCOIN_CORE_USERNAME: ${{ secrets.BITCOIN_CORE_USERNAME }}
+      BITCOIN_CORE_PASSWORD: ${{ secrets.BITCOIN_CORE_PASSWORD }}
+      IPINFO_TOKEN: ${{ secrets.IPINFO_TOKEN }}
