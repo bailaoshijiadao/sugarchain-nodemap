@@ -3,6 +3,8 @@ const Client = require('bitcoin-core');
 const axios = require('axios');
 const app = express();
 
+export default app;
+
 const client = new Client({
     host: process.env.DAEMON_RPC_HOST || '127.0.0.1',
     port: process.env.DAEMON_RPC_PORT || 8333,
