@@ -1,9 +1,13 @@
-const express = require('express');
-const Client = require('bitcoin-core');
-const axios = require('axios');
-const app = express();
+import express from 'express';
+import { Client } from 'bitcoin-core';
+import axios from 'axios';
+import { promises as dns } from 'dns';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-export default app;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const app = express();
 
 const client = new Client({
     host: process.env.DAEMON_RPC_HOST || '127.0.0.1',
@@ -78,8 +82,6 @@ async function reverseDnsLookup(ip) {
         return '';
     }
 }
-
-const path = require('path');
 
 app.use(express.static('public'));
 
