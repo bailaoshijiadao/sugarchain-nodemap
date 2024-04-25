@@ -26,6 +26,7 @@
         "url": "https://github.com/ROZ-MOFUMOFU-ME/nodemap/issues"
     },
     "homepage": "https://github.com/ROZ-MOFUMOFU-ME/nodemap",
+    "type": "module",
     "dependencies": {
         "bitcoin-core": "^4.2.0",
         "axios": "^1.6.8",
