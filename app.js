@@ -3,19 +3,24 @@ const Client = require('bitcoin-core');
 const axios = require('axios');
 const dotenv = require('dotenv');
 const path = require('path');
+const dns = require('dns').promises;
+const NodeCache = require('node-cache');
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Exit if required environment variables are not set
-if (!process.env.DAEMON_RPC_HOST || !process.env.IPINFO_TOKEN) {
-    console.error("Required environment variables are not set.");
+// Setup cache with a standard TTL of 600 seconds (10 minutes)
+const cache = new NodeCache({ stdTTL: 600 });
+
+// Validates that all necessary environment variables are set
+if (!process.env.DAEMON_RPC_HOST || !process.env.IPINFO_TOKEN || !process.env.GOOGLE_MAPS_API_KEY) {
+    console.error("Required .env environment variables are missing.");
     process.exit(1);
 }
 
-// Configure coind client
+/// Configures the coind client with environment variables
 const client = new Client({
     host: process.env.DAEMON_RPC_HOST,
     port: process.env.DAEMON_RPC_PORT,
@@ -30,12 +35,13 @@ const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 
 // Attempt to get peer information
 client.command('getpeerinfo').then((response) => {
+    console.log("Successfully retrieved peer information.");
     // console.log("Coin Daemon Peer Info:", response);
 }).catch((error) => {
     console.error('Error accessing Coin Daemon:', error);
 });
 
-// Extract IP address from connection details
+// Helper function to extract IP address
 function extractIp(address) {
     if (address.includes('[')) {
         return address.substring(0, address.indexOf(']') + 1);
@@ -43,25 +49,50 @@ function extractIp(address) {
     return address.split(':')[0];
 }
 
-// Fetch geolocation information
+// Fetches geolocation information using the ipinfo.io API
 async function getGeoLocation(ip) {
+    const cacheKey = `geo:${ip}`;
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) return cachedData;
+    
     try {
         const cleanIp = ip.replace(/\[|\]/g, '');
         const encodedIP = encodeURIComponent(cleanIp);
         const url = `https://ipinfo.io/${encodedIP}?token=${ipInfoToken}`;
         // console.log("Requesting URL:", url);
         const response = await axios.get(url);
+        cache.set(cacheKey, response.data);
         // console.log("API Response: ", response.data);
         return response.data;
     } catch (error) {
-        console.error('Error getting location:', error);
+        // console.error('Error getting location data for IP:', ip, error);
         return null;
     }
 }
 
-// Endpoint to provide peer location information
+// Performs a reverse DNS lookup
+async function reverseDnsLookup(ip) {
+    const cacheKey = `dns:${ip}`;
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) return cachedData;
+    
+    try {
+        const hostnames = await dns.reverse(ip);
+        cache.set(cacheKey, hostnames[0]);
+        return hostnames[0];
+    } catch (error) {
+        // console.error('Reverse DNS lookup failed for IP:', ip, error);
+        return '';
+    }
+}
+
+// Endpoint to serve peer location data
 app.get('/peer-locations', async (req, res) => {
     try {
+        const cacheKey = 'peer-locations';
+        const cachedLocations = cache.get(cacheKey);
+        if (cachedLocations) return res.json(cachedLocations);
+
         const peers = await client.command('getpeerinfo');
         const locations = [];
 
@@ -82,11 +113,12 @@ app.get('/peer-locations', async (req, res) => {
                 country: (geoInfo.country && geoInfo.timezone) ? `${geoInfo.country}<br><span class="text-light">${geoInfo.timezone}</span>` : '',
                 region: geoInfo.region || '',
                 city: (geoInfo.city && geoInfo.region) ? `${geoInfo.city}<br><span class="text-light">${geoInfo.region}</span>` : '',
-                hostname: geoInfo.hostname || '',
+                hostname: await reverseDnsLookup(ip) || '',
                 org: (geoInfo.asn && geoInfo.asn.name) ? `${geoInfo.asn.name}<br><span class="text-light">${geoInfo.asn.asn}</span>` : ''
             });
         }
 
+        cache.set(cacheKey, locations);
         res.json(locations);
     } catch (error) {
         console.error('Failed to fetch peer locations:', error);
@@ -94,25 +126,17 @@ app.get('/peer-locations', async (req, res) => {
     }
 });
 
-// Reverse DNS lookup
-async function reverseDnsLookup(ip) {
-    const dns = require('dns').promises;
-    try {
-        const hostnames = await dns.reverse(ip);
-        return hostnames[0];
-    } catch (error) {
-        return '';
-    }
-}
-
-// Serve static files
+// Configures static file serving and ejs view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'public'));
+app.use(express.static('public'));
+
+// Main page route
 app.get('/', (req, res) => {
-    res.render('index', { googleMapsApiKey: googleMapsApiKey });
+    res.render('index', { googleMapsApiKey });
 });
 
 // Start the server
 app.listen(port, () => {
-    console.log(`Node Map Server running on port ${port}`);
+    console.log(`Node Map Server running on http://localhost:${port}`);
 });
