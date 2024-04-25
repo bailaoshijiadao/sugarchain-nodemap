@@ -2,10 +2,17 @@ const express = require('express');
 const Client = require('bitcoin-core');
 const axios = require('axios');
 const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config();
+
 const app = express();
 const port = process.env.PORT || 3000;
+
+if (!process.env.DAEMON_RPC_HOST || !process.env.IPINFO_TOKEN) {
+    console.error("Required environment variables are not set.");
+    process.exit(1);
+}
 
 const client = new Client({
     host: process.env.DAEMON_RPC_HOST,
@@ -19,9 +26,9 @@ const client = new Client({
 const ipInfoToken = process.env.IPINFO_TOKEN;
 
 client.command('getpeerinfo').then((response) => {
-    console.log(response);
+    // console.log("Coin Daemon Peer Info:", response);
 }).catch((error) => {
-    console.error('Error accessing bitcoind:', error);
+    console.error('Error accessing Coin Daemon:', error);
 });
 
 function extractIp(address) {
@@ -36,9 +43,9 @@ async function getGeoLocation(ip) {
         const cleanIp = ip.replace(/\[|\]/g, '');
         const encodedIP = encodeURIComponent(cleanIp);
         const url = `https://ipinfo.io/${encodedIP}?token=${ipInfoToken}`;
-        console.log("Requesting URL:", url);
+        // console.log("Requesting URL:", url);
         const response = await axios.get(url);
-        console.log("API Response: ", response.data);
+        // console.log("API Response: ", response.data);
         return response.data;
     } catch (error) {
         console.error('Error getting location:', error);
@@ -66,8 +73,8 @@ app.get('/peer-locations', async (req, res) => {
         }));
         res.json(locations);
     } catch (error) {
-        console.error('Detailed error:', error);
-        res.status(500).json({ error: 'Error fetching peer locations', details: error.message });
+        console.error('Failed to fetch peer locations:', error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 });
 
@@ -81,14 +88,11 @@ async function reverseDnsLookup(ip) {
     }
 }
 
-const path = require('path');
-
 app.use(express.static('public'));
-
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    console.log(`Node Map Server running on port ${port}`);
 });
