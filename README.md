@@ -7,8 +7,9 @@ This project provides a web application for displaying information about cryptoc
 ## Features
 
 - Visual representation of coin nodes on a Google Map.
+- Node data will be cached for 10 minutes.
 - Detailed table view showing:
-  - IP address and Reverse DNS
+  - IP address and Hostname
   - User agent (Wallet Version)
   - Coin Block height
   - Country and Timezone
@@ -40,11 +41,7 @@ To install Node Map, follow these steps:
    ```bash
    npm install
    ```
-4. Add your Google Maps API key to the `public/index.html` file:
-   ```html
-   <script src="https://maps.googleapis.com/maps/api/js?key=<YOUR_GOOGLEMAPS_API_KEY>&callback=initMap" async defer></script>
-   ```
-5. Add RPC Client Settings and your IPinfo token to the `.env` file:
+4. Add RPC Client Settings and IPinfo token and Google Ma@s API Key to the `.env` file:
    ```app.js
    # RPC server settings
    DAEMON_RPC_HOST=127.0.0.1
@@ -56,6 +53,9 @@ To install Node Map, follow these steps:
 
    # IPinfo.io token
    IPINFO_TOKEN=your_ipinfo_token
+   
+   # Google Maps API Key
+   GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 
    # Node Map server port
    PORT=3000
