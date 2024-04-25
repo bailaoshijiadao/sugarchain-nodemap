@@ -9,11 +9,13 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Exit if required environment variables are not set
 if (!process.env.DAEMON_RPC_HOST || !process.env.IPINFO_TOKEN) {
     console.error("Required environment variables are not set.");
     process.exit(1);
 }
 
+// Configure coind client
 const client = new Client({
     host: process.env.DAEMON_RPC_HOST,
     port: process.env.DAEMON_RPC_PORT,
@@ -24,13 +26,16 @@ const client = new Client({
 });
 
 const ipInfoToken = process.env.IPINFO_TOKEN;
+const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 
+// Attempt to get peer information
 client.command('getpeerinfo').then((response) => {
     // console.log("Coin Daemon Peer Info:", response);
 }).catch((error) => {
     console.error('Error accessing Coin Daemon:', error);
 });
 
+// Extract IP address from connection details
 function extractIp(address) {
     if (address.includes('[')) {
         return address.substring(0, address.indexOf(']') + 1);
@@ -38,6 +43,7 @@ function extractIp(address) {
     return address.split(':')[0];
 }
 
+// Fetch geolocation information
 async function getGeoLocation(ip) {
     try {
         const cleanIp = ip.replace(/\[|\]/g, '');
@@ -53,13 +59,22 @@ async function getGeoLocation(ip) {
     }
 }
 
+// Endpoint to provide peer location information
 app.get('/peer-locations', async (req, res) => {
     try {
         const peers = await client.command('getpeerinfo');
-        const locations = await Promise.all(peers.map(async (peer) => {
+        const locations = [];
+
+        for (const peer of peers) {
             const ip = extractIp(peer.addr);
+
+            // Skip local network and localhost IPs
+            if (ip === "127.0.0.1" || ip === "::1" || ip.startsWith("192.168") || ip.startsWith("10.") || ip.startsWith("172.")) {
+                continue;
+            }
+
             const geoInfo = await getGeoLocation(ip) || {};
-            return {
+            locations.push({
                 ip: ip + '<br><span class="text-light">' + (await reverseDnsLookup(ip) + '</span>' || ''),
                 userAgent: peer.subver + '<br><span class="text-light">' + peer.version + '</span>',
                 blockHeight: peer.startingheight,
@@ -69,8 +84,9 @@ app.get('/peer-locations', async (req, res) => {
                 city: (geoInfo.city && geoInfo.region) ? `${geoInfo.city}<br><span class="text-light">${geoInfo.region}</span>` : '',
                 hostname: geoInfo.hostname || '',
                 org: (geoInfo.asn && geoInfo.asn.name) ? `${geoInfo.asn.name}<br><span class="text-light">${geoInfo.asn.asn}</span>` : ''
-            };
-        }));
+            });
+        }
+
         res.json(locations);
     } catch (error) {
         console.error('Failed to fetch peer locations:', error);
@@ -78,6 +94,7 @@ app.get('/peer-locations', async (req, res) => {
     }
 });
 
+// Reverse DNS lookup
 async function reverseDnsLookup(ip) {
     const dns = require('dns').promises;
     try {
@@ -88,11 +105,14 @@ async function reverseDnsLookup(ip) {
     }
 }
 
-app.use(express.static('public'));
+// Serve static files
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'public'));
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.render('index', { googleMapsApiKey: googleMapsApiKey });
 });
 
+// Start the server
 app.listen(port, () => {
     console.log(`Node Map Server running on port ${port}`);
 });
