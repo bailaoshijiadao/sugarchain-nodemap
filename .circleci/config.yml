@@ -58,7 +58,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: "20.212"
+          node-version: "20.21"
       - run:
           name: Run test
           command: npm test
