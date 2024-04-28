@@ -73,7 +73,20 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: "20.21"
+          node-version: "20.12"
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Verify build
+          command: echo "Build completed successfully!"v
+  test-v22:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - node/install:
+          node-version: "22.0"
       - run:
           name: Install dependencies
           command: npm install
@@ -89,3 +102,4 @@ workflows:
       - test-v16
       - test-v18
       - test-v20
+      - test-v22
