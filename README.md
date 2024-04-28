@@ -6,24 +6,25 @@ This project provides a web application for displaying information about cryptoc
 
 ## Features
 
-- Visual representation of coin nodes on a Google Map.
+- Visual representation of coin nodes on a Google Maps.
 - Node data will be cached for 10 minutes.
-- Detailed table view showing:
+- Detailed table view showing (if you use IPinfo.io):
   - IP address and Hostname
   - User agent (Wallet Version)
-  - Coin Block height
+  - Coin block height
   - Country and Timezone
   - Location (City, States)
-  - Network details, ASN
+  - Network details, ASN Number
 
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
 - You have installed Node.js 12+ and npm 6+.
 - You have a basic understanding of JavaScript and Node.js.
+- You have a cryptocurrency daemon node can accessible via RPC.
 - You have a IPinfo.io token or something else.
 - You have a Google Maps API key.
-- You have a Reverse Proxy. (Recommend Nginx)
+- You have a Reverse Proxy and web server. (Recommend Nginx)
 
 ## Installing Node Map
 
@@ -41,7 +42,7 @@ To install Node Map, follow these steps:
    ```bash
    npm install
    ```
-4. Add RPC Client Settings and IPinfo token and Google Ma@s API Key to the `.env` file:
+4. Add RPC Client Settings and IPinfo token and Google Maps API Key to the `.env` file:
    ```app.js
    # RPC server settings
    DAEMON_RPC_HOST=127.0.0.1
@@ -60,28 +61,78 @@ To install Node Map, follow these steps:
    # Node Map server port
    PORT=3000
    ```
-
+   
 ## Using Node Map
 
 To use Node Map, run the following command from the root of the project:
-
-```bash
-node app.js
-```
-
+  ```bash
+  node app.js
+  ```
 or
-
-```bash
-npm start
-```
-
+  ```bash
+  npm start
+  ```
 or
+  ```bash
+  pm2 start app.js --name nodemap
+  ```
 
-```bash
-pm2 start app.js --name nodemap
-```
+Open your web browser and navigate to `http://localhost:3000` to view nodemap.
 
-Open your web browser and navigate to `http://localhost:3000` to view the application.
+## Publish on the Internet
+
+### Set up reverse proxy and wev server e.g. Nginx
+   ```nginx.conf
+   server {
+       listen                  443 ssl http2;
+       listen                  [::]:443 ssl http2;
+       server_name             nodemap.exaple.com;
+       root                    /path/to/nodemap/public;
+
+       # SSL
+       ssl_certificate         /etc/letsencrypt/live/exaple.com/fullchain.pem;
+       ssl_certificate_key     /etc/letsencrypt/live/exaple.com/privkey.pem;
+       ssl_trusted_certificate /etc/letsencrypt/live/exaple.com/chain.pem;
+
+       # logging
+       access_log              /var/log/nginx/access.log combined buffer=512k flush=1m;
+       error_log               /var/log/nginx/error.log warn;
+
+       # reverse proxy
+       location / {
+           proxy_pass                         http://127.0.0.1:3000;
+           proxy_set_header Host              $host;
+           proxy_http_version                 1.1;
+           proxy_cache_bypass                 $http_upgrade;
+
+           # Proxy SSL
+           proxy_ssl_server_name              on;
+
+           # Proxy headers
+           proxy_set_header Upgrade           $http_upgrade;
+           proxy_set_header Connection        $connection_upgrade;
+           proxy_set_header X-Real-IP         $remote_addr;
+           proxy_set_header Forwarded         $proxy_add_forwarded;
+           proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+           proxy_set_header X-Forwarded-Proto $scheme;
+           proxy_set_header X-Forwarded-Host  $host;
+           proxy_set_header X-Forwarded-Port  $server_port;
+
+           # Proxy timeouts
+           proxy_connect_timeout              60s;
+           proxy_send_timeout                 60s;
+           proxy_read_timeout                 60s;
+       }      
+   ```
+This site is useful to setup Nginx!
+[nginxconfig.io](https://www.digitalocean.com/community/tools/nginx)
+
+### start reverse proxy and web server
+   ```
+   sudo systemctl start nginx
+   sudo systemctl enable nginx
+   ```
+Accessing example.com will show nodemap.
 
 ## Contributing to Node Map
 
@@ -97,7 +148,7 @@ Alternatively, see the GitHub documentation on [creating a pull request](https:/
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE.md file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/ROZ-MOFUMOFU-ME/nodemap/blob/main/LICENSE) file for details.
 
 ## Contact
 
