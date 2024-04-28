@@ -2,9 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -15,19 +15,12 @@ jobs:
         node-version: [12.x, 14.x, 16.x, 18.x, 20.x]
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: 'package-lock.json'
-        cache-key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}-20210401
-    - run: npm install
-    - run: npm test
-    env:
-      BITCOIN_CORE_HOST: ${{ secrets.BITCOIN_CORE_HOST }}
-      BITCOIN_CORE_PORT: ${{ secrets.BITCOIN_CORE_PORT }}
-      BITCOIN_CORE_USERNAME: ${{ secrets.BITCOIN_CORE_USERNAME }}
-      BITCOIN_CORE_PASSWORD: ${{ secrets.BITCOIN_CORE_PASSWORD }}
-      IPINFO_TOKEN: ${{ secrets.IPINFO_TOKEN }}
+    - name: Install dependencies
+      run: npm install
+    - name: Run tests
+      run: npm test
