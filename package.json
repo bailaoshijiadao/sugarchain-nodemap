@@ -3,9 +3,10 @@
     "version": "0.1.1",
     "description": "cryptocurrency geoip geolocation node map node.js javascript",
     "main": "app.js",
+    "type": "module",
     "scripts": {
         "start": "node app.js",
-        "test": "mocha"
+        "test": "dotenv -e .env.test mocha 'test/**/*.js'"
     },
     "repository": {
         "type": "git",
@@ -35,8 +36,9 @@
         "node-cache": "^5.1.2"
     },
     "devDependencies": {
-        "mocha": "^10.4.0",
         "chai": "^5.1.0",
-        "chai-http": "^4.4.0"
+        "chai-http": "^4.4.0",
+        "dotenv-cli": "^7.4.1",
+        "mocha": "^10.4.0"
     }
 }
