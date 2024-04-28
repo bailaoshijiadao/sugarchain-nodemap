@@ -124,8 +124,7 @@ Open your web browser and navigate to `http://localhost:3000` to view nodemap.
            proxy_read_timeout                 60s;
        }      
    ```
-This site is useful to setup Nginx!
-[nginxconfig.io](https://www.digitalocean.com/community/tools/nginx)
+[nginxconfig.io](https://www.digitalocean.com/community/tools/nginx) This site is useful to setup Nginx!
 
 ### start reverse proxy and web server
    ```
@@ -157,6 +156,12 @@ ROZ: [@ROZ_mofumofu_me](https://twitter.com/ROZ_mofumofu_me)
 Aoi Emerauda: [@Aoi_Emerauda](https://twitter.com/Aoi_Emerauda) Alternative
 
 Project Link: [https://github.com/ROZ-MOFUMOFU-ME/nodemap](https://github.com/ROZ-MOFUMOFU-ME/nodemap)
+
+## Credits
+
+* [ROZ](https://github.com/ROZ-MOFUMOFU-ME) - Author
+
+* [Aoi Emerauda](https://github.com/emerauda) - Alternative
 
 ## Donations
 
