@@ -1,17 +1,73 @@
 version: 2.1
 orbs:
   node: circleci/node@5.2
-
 jobs:
-  build:
+  test-v10:
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
-      - node/install-packages
+      - node/install:
+          node-version: "10.24"
       - run:
-          name: Run tests
+          name: Run test
           command: npm test
-
+  test-v12:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - node/install:
+          node-version: "12.22"
+      - run:
+          name: Run test
+          command: npm test
+  test-v14:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - node/install:
+          node-version: "14.21"
+      - run:
+          name: Run test
+          command: npm test
+  test-v16:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - node/install:
+          node-version: "16.20"
+      - run:
+          name: Run test
+          command: npm test
+  test-v18:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - node/install:
+          node-version: "18.20"
+      - run:
+          name: Run test
+          command: npm test
+  test-v20:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - node/install:
+          node-version: "20.212"
+      - run:
+          name: Run test
+          command: npm test
 workflows:
   build_and_test:
     jobs:
-      - build
+      - test-v10
+      - test-v12
+      - test-v14
+      - test-v16
+      - test-v18
+      - test-v20
