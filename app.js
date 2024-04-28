@@ -1,10 +1,11 @@
-const express = require('express');
-const Client = require('bitcoin-core');
-const axios = require('axios');
-const dotenv = require('dotenv');
-const path = require('path');
-const dns = require('dns').promises;
-const NodeCache = require('node-cache');
+import express from 'express';
+import pkg from 'bitcoin-core';
+const { Client } = pkg;
+import axios from 'axios';
+import dotenv from 'dotenv';
+import path from 'path';
+import dns from 'dns';
+import NodeCache from 'node-cache';
 
 dotenv.config();
 
@@ -154,3 +155,5 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Node Map Server running on http://localhost:${port}`);
 });
+
+export default app;
