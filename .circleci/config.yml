@@ -10,8 +10,11 @@ jobs:
       - node/install:
           node-version: "12.22"
       - run:
-          name: Install dependencies
+          name: Build
           command: npm install
+      - run:
+          name: Run
+          command: npm start
       - run:
           name: Verify build
           command: echo "Build completed successfully!"
@@ -23,8 +26,11 @@ jobs:
       - node/install:
           node-version: "14.21"
       - run:
-          name: Install dependencies
+          name: Build
           command: npm install
+      - run:
+          name: Run
+          command: npm start
       - run:
           name: Verify build
           command: echo "Build completed successfully!"
@@ -36,8 +42,11 @@ jobs:
       - node/install:
           node-version: "16.20"
       - run:
-          name: Install dependencies
+          name: Build
           command: npm install
+      - run:
+          name: Run
+          command: npm start
       - run:
           name: Verify build
           command: echo "Build completed successfully!"
@@ -49,8 +58,11 @@ jobs:
       - node/install:
           node-version: "18.20"
       - run:
-          name: Install dependencies
+          name: Build
           command: npm install
+      - run:
+          name: Run
+          command: npm start
       - run:
           name: Verify build
           command: echo "Build completed successfully!"
@@ -62,11 +74,14 @@ jobs:
       - node/install:
           node-version: "20.12"
       - run:
-          name: Install dependencies
+          name: Build
           command: npm install
       - run:
+          name: Run
+          command: npm start
+      - run:
           name: Verify build
-          command: echo "Build completed successfully!"v
+          command: echo "Build completed successfully!"
   test-v22:
     docker:
       - image: cimg/base:stable
@@ -75,8 +90,11 @@ jobs:
       - node/install:
           node-version: "22.0"
       - run:
-          name: Install dependencies
+          name: Build
           command: npm install
+      - run:
+          name: Run
+          command: npm start
       - run:
           name: Verify build
           command: echo "Build completed successfully!"
