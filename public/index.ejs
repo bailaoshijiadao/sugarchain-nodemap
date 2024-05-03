@@ -9,6 +9,8 @@
         integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap&libraries=marker"
+        async defer></script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -27,6 +29,14 @@
             border-collapse: collapse;
             border: 1px solid #ccc;
             border-radius: 10px;
+        }
+
+        .box #boxFooter {
+            width: 90%;
+            margin: 10px auto;
+            border-collapse: collapse;
+            text-align: left;
+            color: #333;
         }
 
         .header,
@@ -69,7 +79,7 @@
             color: #bbb;
         }
 
-        h2 {
+        h3 {
             color: #333;
         }
 
@@ -91,61 +101,17 @@
             vertical-align: middle;
         }
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap&libraries=marker" async defer></script>
-    <script>
-        function initMap() {
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 2,
-                center: { lat: 0, lng: 0 },
-                mapId: "DEMO_MAP_ID"
-            });
-
-            fetch('/peer-locations')
-                .then(response => response.json())
-                .then(peers => {
-                    const table = document.getElementById('peerTableBody');
-                    table.innerHTML = '';
-                    peers.forEach(peer => {
-                        const row = table.insertRow();
-                        const ipCell = row.insertCell();
-                        const userAgentCell = row.insertCell();
-                        const blockHeightCell = row.insertCell();
-                        const countryCell = row.insertCell();
-                        const cityCell = row.insertCell();
-                        const orgCell = row.insertCell();
-
-                        ipCell.innerHTML = peer.ip.replace('\n', '<br>');
-                        userAgentCell.innerHTML = peer.userAgent.replace('\n', '<br>');
-                        blockHeightCell.textContent = peer.blockHeight;
-                        countryCell.innerHTML = peer.country.replace('\n', '<br>');
-                        cityCell.innerHTML = peer.city.replace('\n', '<br>');
-                        orgCell.innerHTML = peer.org;
-
-                        if (peer.location) {
-                            var latLng = {
-                                lat: parseFloat(peer.location[0]),
-                                lng: parseFloat(peer.location[1])
-                            };
-                            new google.maps.marker.AdvancedMarkerElement({
-                                position: latLng,
-                                map: map,
-                                title: peer.ip
-                            });
-                        }
-                    });
-                });
-        }
-    </script>
 </head>
 
 <body onload="initMap()">
     <div class="pure-g">
         <div class="pure-u-1 header box">
-            <h2>Node Map</h2>
+            <h3>Node Map</h3>
             <div id="map"></div>
+            <div id="boxFooter">Last Updated: <span id="lastUpdated"></span></div>
         </div>
         <div class="pure-u-1 content box">
-            <h2>Nodes Information</h2>
+            <h3>Node Info</h3>
             <table class="pure-table">
                 <thead>
                     <tr>
@@ -157,10 +123,62 @@
                         <th>Network</th>
                     </tr>
                 </thead>
-                <tbody id="peerTableBody"></tbody>
+                <tbody id="locationsTable"></tbody>
             </table>
         </div>
     </div>
+    <script>
+        let map;
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 2,
+                center: { lat: 0, lng: 0 },
+                mapId: "DEMO_MAP_ID"
+            });
+            fetchLocations();
+        }
+
+        function fetchLocations() {
+            fetch('/peer-locations')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('lastUpdated').textContent = data.lastUpdated;
+                    populateTable(data.locations);
+                    placeMarkers(data.locations);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+        function populateTable(locations) {
+            const table = document.getElementById('locationsTable');
+            table.innerHTML = '';
+            locations.forEach(location => {
+                const row = table.insertRow();
+                row.insertCell().innerHTML = location.ip.replace('\n', '<br>');
+                row.insertCell().innerHTML = location.userAgent.replace('\n', '<br>');
+                row.insertCell().textContent = location.blockHeight;
+                row.insertCell().innerHTML = location.country.replace('\n', '<br>');
+                row.insertCell().innerHTML = location.city.replace('\n', '<br>');
+                row.insertCell().innerHTML = location.org;
+            });
+        }
+
+        function placeMarkers(peers) {
+            peers.forEach(peer => {
+                if (peer.location) {
+                    var latLng = {
+                        lat: parseFloat(peer.location[0]),
+                        lng: parseFloat(peer.location[1])
+                    };
+                    new google.maps.marker.AdvancedMarkerElement({
+                        position: latLng,
+                        map: map,
+                        title: peer.ip
+                    });
+                }
+            });
+        }
+
+    </script>
 </body>
 <footer>
     <div>
