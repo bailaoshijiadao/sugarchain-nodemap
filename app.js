@@ -1,21 +1,19 @@
-import express from 'express';
-import pkg from 'bitcoin-core';
-const { Client } = pkg;
-import axios from 'axios';
-import dotenv from 'dotenv';
-import path from 'path';
-import dns from 'dns';
-import NodeCache from 'node-cache';
+const express = require('express');
+const Client = require('bitcoin-core');
+const axios = require('axios');
+const dotenv = require('dotenv');
+const path = require('path');
+const dns = require('dns').promises;
+const NodeCache = require('node-cache');
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Setup cache with a standard TTL of 600 seconds (10 minutes)
-const cache = new NodeCache({ stdTTL: 600 });
+// Setup cache with a standard TTL of 60 minutes
+const cache = new NodeCache({ stdTTL: 3600 });
 let lastCacheUpdateTime = null;
-
 // Validates that all necessary environment variables are set
 if (!process.env.DAEMON_RPC_HOST || !process.env.IPINFO_TOKEN || !process.env.GOOGLE_MAPS_API_KEY) {
     console.error("Required .env environment variables are missing.");
@@ -88,6 +86,18 @@ async function reverseDnsLookup(ip) {
     }
 }
 
+// Function to format the 'org' data
+function formatOrg(org) {
+    const regex = /(AS\d+)\s*(.*)/;
+    const match = org.match(regex);
+    if (match) {
+        // If matched, switch the order so the AS number appears after the company name
+        return `${match[2]}<br><span class="text-light">${match[1]}</span>`;
+    }
+    // If no match is found, return the original string
+    return org;
+}
+
 // Endpoint to serve peer location data
 async function fetchAndCachePeerLocations() {
     try {
@@ -113,7 +123,7 @@ async function fetchAndCachePeerLocations() {
                 region: geoInfo.region || '',
                 city: (geoInfo.city && geoInfo.region) ? `${geoInfo.city}<br><span class="text-light">${geoInfo.region}</span>` : '',
                 hostname: await reverseDnsLookup(ip) || '',
-                org: (geoInfo.asn && geoInfo.asn.name) ? `${geoInfo.asn.name}<br><span class="text-light">${geoInfo.asn.asn}</span>` : ''
+                org: geoInfo.org ? formatOrg(geoInfo.org) : ''
             });
         }
 
@@ -125,8 +135,8 @@ async function fetchAndCachePeerLocations() {
     }
 };
 
-// Set an interval to refresh the cache every 10 minutes
-setInterval(fetchAndCachePeerLocations, 600000);
+// Set an interval to refresh the cache every 1 hour
+setInterval(fetchAndCachePeerLocations, 3600000);
 
 // Initial fetch and cache when the server starts
 fetchAndCachePeerLocations();
@@ -155,5 +165,3 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Node Map Server running on http://localhost:${port}`);
 });
-
-export default app;
