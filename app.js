@@ -143,11 +143,16 @@ fetchAndCachePeerLocations();
 
 // Configure express app and routes...
 app.get('/peer-locations', async (req, res) => {
-    const cachedLocations = cache.get('peer-locations');
-    if (cachedLocations) {
-        res.json(cachedLocations);
-    } else {
-        res.status(500).json({ error: 'Failed to retrieve peer locations from cache', details: error.message });
+    try {
+        const cachedLocations = cache.get('peer-locations');
+        if (cachedLocations) {
+            res.json(cachedLocations);
+        } else {
+            throw new Error('Failed to retrieve peer locations from cache');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 });
 
