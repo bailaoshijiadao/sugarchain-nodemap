@@ -1,9 +1,8 @@
 {
     "name": "nodemap",
-    "version": "0.1.1",
+    "version": "0.1.4",
     "description": "cryptocurrency geoip geolocation node map node.js javascript",
     "main": "app.js",
-    "type": "module",
     "scripts": {
         "start": "node app.js",
         "test": "dotenv -e .env.test mocha 'test/**/*.js'"
