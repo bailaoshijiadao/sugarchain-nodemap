@@ -16,8 +16,7 @@ const cache = new NodeCache({ stdTTL: 3600 });
 let lastCacheUpdateTime = null;
 // Validates that all necessary environment variables are set
 if (!process.env.DAEMON_RPC_HOST || !process.env.IPINFO_TOKEN || !process.env.GOOGLE_MAPS_API_KEY) {
-    console.error("Required .env environment variables are missing.");
-    process.exit(1);
+    console.warn("Required .env environment variables are missing.");
 }
 
 /// Configures the coind client with environment variables
