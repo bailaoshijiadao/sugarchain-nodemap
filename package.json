@@ -35,7 +35,7 @@
         "node-cache": "^5.1.2"
     },
     "devDependencies": {
-        "chai": "^5.1.0",
+        "chai": "^4.4.1",
         "chai-http": "^4.4.0",
         "dotenv-cli": "^7.4.1",
         "mocha": "^10.4.0"

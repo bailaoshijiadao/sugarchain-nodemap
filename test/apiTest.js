@@ -1,10 +1,10 @@
-import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+const chai = require('chai');
+const chaiHttp = require('chai-http');
 
 chai.use(chaiHttp.default || chaiHttp);
 const expect = chai.expect;
 
-import app from '../app.js';
+const app = require('../app.js');
 
 describe('API tests', () => {
   it('should respond with HTTP status 200', async () => {

@@ -174,3 +174,5 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Node Map Server running on http://localhost:${port}`);
 });
+
+module.exports = app;
