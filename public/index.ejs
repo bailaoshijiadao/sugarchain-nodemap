@@ -9,8 +9,6 @@
         integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap&libraries=marker"
-        async defer></script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -102,13 +100,13 @@
         }
     </style>
 </head>
-
+<script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap&libraries=marker" async defer></script>
 <body onload="initMap()">
     <div class="pure-g">
         <div class="pure-u-1 header box">
             <h3>Node Map</h3>
             <div id="map"></div>
-            <div id="boxFooter">Last Updated: <span id="lastUpdated"></span></div>
+            <div id="boxFooter">Last Update: <span id="lastUpdated">/span></div>
         </div>
         <div class="pure-u-1 content box">
             <h3>Node Info</h3>

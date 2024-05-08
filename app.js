@@ -40,20 +40,71 @@ async function fetchPeerInfo() {
     try {
         return await client.command('getpeerinfo');
     } catch (error) {
-        console.error('Error accessing Coin Daemon:', error);
+        console.error('Error accessing Coin Daemon for getpeerinfo:', error);
         return [];
+    }
+}
+
+// Function to retrieve network information, with fallback to getinfo if getnetworkinfo fails
+async function fetchNetworkInfo() {
+    try {
+        return await client.command('getnetworkinfo');
+    } catch (error) {
+        console.error('Error accessing Coin Daemon for getnetworkinfo:', error);
+        try {
+            // Fallback to getinfo if getnetworkinfo is not available
+            const info = await client.command('getinfo');
+            // Extract and reformat data to match the expected structure from getnetworkinfo
+            return {
+                subversion: info.version,
+                protocolversion: info.protocolversion,
+                localaddresses: [{
+                    address: info.ip,
+                    port: process.env.DAEMON_RPC_PORT || 8332
+                }],
+            };
+        } catch (fallbackError) {
+            console.error('Error accessing Coin Daemon for getinfo:', fallbackError);
+            return {};
+        }
+    }
+}
+
+// Function to retrieve mining information
+async function fetchMiningInfo() {
+    try {
+        return await client.command('getmininginfo');
+    } catch (error) {
+        console.error('Error accessing Coin Daemon for getmininginfo:', error);
+        return {};
     }
 }
 
 // Skip local and private addresses
 function isLocalAddress(ip) {
     return ["127.0.0.1", "::1", "::ffff:127.0.0.1"].includes(ip) ||
-        ip.startsWith("192.168") || ip.startsWith("10.") || (ip.startsWith("172.") && parseInt(ip.split('.')[1], 10) >= 16 && parseInt(ip.split('.')[1], 10) <= 31);
+        ip.startsWith("192.168") || ip.startsWith("10.") || ip.startsWith("fe80:") || (ip.startsWith("172.") && parseInt(ip.split('.')[1], 10) >= 16 && parseInt(ip.split('.')[1], 10) <= 31);
 }
 
-// Helper function to extract IP address
+// Helper function to extract IP address, modified to handle IPv6 addresses correctly
 function extractIp(address) {
-    return address.includes('[') ? address.substring(0, address.indexOf(']') + 1) : address.split(':')[0];
+    if (address.includes('[')) {
+        // This is for IPv6 addresses enclosed in brackets, typically with a port
+        return address.substring(1, address.indexOf(']'));
+    } else if (address.includes(':')) {
+        // Check if it's an IPv6 without brackets or an IPv4 with port
+        const parts = address.split(':');
+        if (parts.length > 2) {
+            // It's an IPv6 address without brackets
+            return address;
+        } else {
+            // It's an IPv4 address with port
+            return parts[0];
+        }
+    } else {
+        // Plain IPv4 or IPv6 address without port
+        return address;
+    }
 }
 
 // Fetches geolocation information using the ipinfo.io API
@@ -109,9 +160,11 @@ function formatOrg(org) {
 async function updatePeerLocations() {
     try {
         const peers = await fetchPeerInfo();
+        const networkInfo = await fetchNetworkInfo();
+        const miningInfo = await fetchMiningInfo();
         if (!peers) return;
 
-        const locations = await Promise.all(peers.map(async peer => {
+        const peerLocations = await Promise.all(peers.map(async peer => {
             const ip = extractIp(peer.addr);
             if (isLocalAddress(ip)) {
                 return null;
@@ -127,15 +180,33 @@ async function updatePeerLocations() {
                 blockHeight: peer.startingheight,
                 location: geoInfo.loc ? geoInfo.loc.split(',') : '',
                 country: `${geoInfo.country}<br><span class="text-light">${geoInfo.timezone}</span>`,
-                region: geoInfo.region,
                 city: `${geoInfo.city}<br><span class="text-light">${geoInfo.region}</span>`,
-                hostname: dnsLookup,
                 org: `${orgInfo.name}<br><span class="text-light">${orgInfo.number}</span>`
             }
         }));
-        cache.set('peer-locations', locations.filter(location => location));
+
+        const localAddresses = await Promise.all(networkInfo.localaddresses.map(async addr => {
+            const ip = extractIp(addr.address); 
+            const geoInfo = await getGeoLocation(addr.address) || {};
+            const dnsLookup = await reverseDnsLookup(addr.address) || '';
+            const orgInfo = formatOrg(geoInfo.org);
+
+            return {
+                ip: `${ip}<br><span class="text-light">${dnsLookup}</span>`,
+                userAgent: `${networkInfo.subversion}<br><span class="text-light">${networkInfo.protocolversion}</span>`,
+                blockHeight: miningInfo.blocks,
+                location: geoInfo.loc ? geoInfo.loc.split(',') : '',
+                country: `${geoInfo.country}<br><span class="text-light">${geoInfo.timezone}</span>`,
+                city: `${geoInfo.city}<br><span class="text-light">${geoInfo.region}</span>`,
+                org: `${orgInfo.name}<br><span class="text-light">${orgInfo.number}</span>`
+            }
+        }));
+
+        // Combine peer locations with local address locations
+        const combinedLocations = peerLocations.filter(location => location).concat(localAddresses);
+        cache.set('peer-locations', combinedLocations);
         const now = new Date();
-        lastCacheUpdateTime = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} UTC+0900 (JST)`;
+        lastCacheUpdateTime = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
         console.log(`Peer locations updated and cached at ${lastCacheUpdateTime}.`)
     } catch (error) {
         console.error('Failed to fetch peer locations:', error)
