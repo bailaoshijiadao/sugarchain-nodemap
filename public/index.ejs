@@ -7,16 +7,20 @@
     <title>Node Map</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
         integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Quicksand', sans-serif;
             margin: 0 auto;
             padding: 0;
             display: flex;
             flex-direction: column;
-            background-color: #f7f7f7;
+            background-color: #2d2d2d;
             max-width: 1440px;
         }
 
@@ -100,8 +104,8 @@
         }
     </style>
 </head>
-<script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&callback=initMap&libraries=marker" async defer></script>
-<body onload="initMap()">
+
+<body>
     <div class="pure-g">
         <div class="pure-u-1 header box">
             <h3>Node Map</h3>
@@ -126,15 +130,12 @@
         </div>
     </div>
     <script>
-        let map;
-        function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 2,
-                center: { lat: 0, lng: 0 },
-                mapId: "DEMO_MAP_ID"
-            });
-            fetchLocations();
-        }
+        let map = L.map('map').setView([25, -0.0005], 2);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        fetchLocations();
 
         function fetchLocations() {
             fetch('/peer-locations')
@@ -146,6 +147,7 @@
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
+
         function populateTable(locations) {
             const table = document.getElementById('locationsTable');
             table.innerHTML = '';
@@ -163,15 +165,8 @@
         function placeMarkers(peers) {
             peers.forEach(peer => {
                 if (peer.location) {
-                    var latLng = {
-                        lat: parseFloat(peer.location[0]),
-                        lng: parseFloat(peer.location[1])
-                    };
-                    new google.maps.marker.AdvancedMarkerElement({
-                        position: latLng,
-                        map: map,
-                        title: peer.ip
-                    });
+                    var latLng = L.latLng(peer.location[0], peer.location[1]);
+                    L.marker(latLng).addTo(map).bindPopup(peer.ip);
                 }
             });
         }
