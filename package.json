@@ -1,7 +1,7 @@
 {
     "name": "nodemap",
-    "version": "0.1.4",
-    "description": "cryptocurrency geoip geolocation node map node.js javascript",
+    "version": "0.2.0",
+    "description": "cryptocurrency geolocation map",
     "main": "app.js",
     "scripts": {
         "start": "node app.js",
