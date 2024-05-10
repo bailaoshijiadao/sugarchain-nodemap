@@ -185,7 +185,7 @@ async function updatePeerLocations() {
         }));
 
         const localAddresses = await Promise.all(networkInfo.localaddresses.map(async addr => {
-            const ip = extractIp(addr.address); 
+            const ip = extractIp(addr.address);
             const geoInfo = await getGeoLocation(addr.address) || {};
             const dnsLookup = await reverseDnsLookup(addr.address) || '';
             const orgInfo = formatOrg(geoInfo.org);
