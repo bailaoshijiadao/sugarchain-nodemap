@@ -14,7 +14,7 @@ const cache = new NodeCache({ stdTTL: 3600 }); // Setup cache TTL set for 60 min
 let lastCacheUpdateTime = null;
 
 // Validates essential environment variables are set
-const requiredVars = ['DAEMON_RPC_HOST', 'IPINFO_TOKEN', 'GOOGLE_MAPS_API_KEY'];
+const requiredVars = ['DAEMON_RPC_HOST', 'IPINFO_TOKEN'];
 const missingVars = requiredVars.filter(varName => !process.env[varName]);
 
 if (missingVars.length) {
@@ -33,7 +33,6 @@ const client = new Client({
 });
 
 const ipInfoToken = process.env.IPINFO_TOKEN;
-const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 
 // Function to retrieve peer information
 async function fetchPeerInfo() {
@@ -238,7 +237,7 @@ app.use(express.static('public'));
 
 // Main page route
 app.get('/', (req, res) => {
-    res.render('index', { googleMapsApiKey });
+    res.render('index');
 });
 
 // Start the server
