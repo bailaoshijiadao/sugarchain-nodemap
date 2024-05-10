@@ -12,7 +12,7 @@ This project provides a web application for displaying information about cryptoc
 - Visual representation of coin nodes on a Google Maps.
 - Node data will be cached for 10 minutes.
 - Detailed table view showing (if you use IPinfo.io):
-  - IP address and Hostname
+  - IP address and Hostname (if available)
   - User agent (Wallet Version)
   - Coin block height
   - Country and Timezone
@@ -26,7 +26,6 @@ Before you begin, ensure you have met the following requirements:
 - You have a basic understanding of JavaScript and Node.js.
 - You have a cryptocurrency daemon node can accessible via RPC.
 - You have a IPinfo.io token or something else.
-- You have a Google Maps API key.
 - You have a Reverse Proxy and web server. (Recommend Nginx)
 
 ## Installing Node Map
@@ -57,9 +56,6 @@ To install Node Map, follow these steps:
 
    # IPinfo.io token
    IPINFO_TOKEN=your_ipinfo_token
-   
-   # Google Maps API Key
-   GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 
    # Node Map server port
    PORT=3000
