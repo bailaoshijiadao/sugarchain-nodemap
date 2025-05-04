@@ -180,7 +180,7 @@ async function updatePeerLocations() {
                 location: geoInfo.loc ? geoInfo.loc.split(',') : '',
                 country: `${geoInfo.country}<br><span class="text-light">${geoInfo.timezone}</span>`,
                 city: `${geoInfo.city}<br><span class="text-light">${geoInfo.region}</span>`,
-                org: `${orgInfo.name}<br><span class="text-light">${peer.addr}</span>`
+                org: `${orgInfo.name}<br><span class="text-light">${orgInfo.number}<br>${peer.addr}</span>`
             }
         }));
 
@@ -197,7 +197,7 @@ async function updatePeerLocations() {
                 location: geoInfo.loc ? geoInfo.loc.split(',') : '',
                 country: `${geoInfo.country}<br><span class="text-light">${geoInfo.timezone}</span>`,
                 city: `${geoInfo.city}<br><span class="text-light">${geoInfo.region}</span>`,
-                org: `${orgInfo.name}<br><span class="text-light">${peer.addr}</span>`
+                org: `${orgInfo.name}<br><span class="text-light">${orgInfo.number}<br>${peer.addr}</span>`
             }
         }));
 
