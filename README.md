@@ -34,11 +34,11 @@ To install Node Map, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ROZ-MOFUMOFU-ME/nodemap.git
+   git clone https://github.com/bailaoshijiadao/sugarchain-nodemap.git
    ```
 2. Navigate to the project directory:
    ```bash
-   cd nodemap
+   cd sugarchain-nodemap
    ```
 3. Install the necessary packages:
    ```bash
@@ -48,7 +48,7 @@ To install Node Map, follow these steps:
    ```app.js
    # RPC server settings
    DAEMON_RPC_HOST=127.0.0.1
-   DAEMON_RPC_PORT=8333
+   DAEMON_RPC_PORT=34229
    DAEMON_RPC_USERNAME=your_username
    DAEMON_RPC_PASSWORD=your_password
    DAEMON_RPC_SSL=false
@@ -144,46 +144,3 @@ To contribute to Node Map, follow these steps:
 
 Alternatively, see the GitHub documentation on [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/ROZ-MOFUMOFU-ME/nodemap/blob/main/LICENSE) file for details.
-
-## Contact
-
-ROZ: [@ROZ_mofumofu_me](https://twitter.com/ROZ_mofumofu_me)
-
-Aoi Emerauda: [@Aoi_Emerauda](https://twitter.com/Aoi_Emerauda) Alternative
-
-Project Link: [https://github.com/ROZ-MOFUMOFU-ME/nodemap](https://github.com/ROZ-MOFUMOFU-ME/nodemap)
-
-## Credits
-
-* [ROZ](https://github.com/ROZ-MOFUMOFU-ME) - Author
-
-* [Aoi Emerauda](https://github.com/emerauda) - Alternative
-
-## Donations
-
-Donations for development are greatly appreciated!
-
-[GitHub Sponsors](https://github.com/sponsors/ROZ-MOFUMOFU-ME)
-
-[Patreon](https://patreon.com/emerauda)
-
-[FANBOX](https://emerauda.fanbox.cc/)
-
-[Fantia](https://fantia.jp/emerauda)
-
-[Buy Me a Coffee](https://buymeacoffee.com/emerauda)
-
-BTC: 3C8oCWjVs2sycQcK3ttiPRSKV4AKBhC7xT
-
-ETH: 0xc664a0416c23b1b13a18e86cb5fdd1007be375ae
-
-LTC: Lh96WZ7Rw9Wf4GDX2KXpzieneZFV5Xe5ou
-
-BCH: pzdsppue8uwc20x35psaqq8sgchkenr49c0qxzazxu
-
-ETC: 0xc664a0416c23b1b13a18e86cb5fdd1007be375ae
-
-MONA: MLEqE3vi11j4ZguMjkvMn5rUtze6kXbAzQ
