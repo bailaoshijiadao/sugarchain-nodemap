@@ -1,9 +1,10 @@
 # Node Map
-[![Join the chat at https://github.com/ROZ-MOFUMOFU-ME/nodemap/](https://badges.gitter.im/Join%20Chat.svg)](https://matrix.to/#/#nodemap:gitter.im)
-[![Node.js CI](https://github.com/ROZ-MOFUMOFU-ME/nodemap/actions/workflows/node.js.yml/badge.svg)](https://github.com/ROZ-MOFUMOFU-ME/nodemap/actions/workflows/node.js.yml)
-[![CircleCI](https://circleci.com/gh/ROZ-MOFUMOFU-ME/nodemap/tree/main.svg?style=svg)](https://circleci.com/gh/ROZ-MOFUMOFU-ME/nodemap/tree/main)
 
-![initial](https://github.com/ROZ-MOFUMOFU-ME/nodemap/assets/35634920/63cfb18c-bf18-4a42-abeb-7c019b7b3aa3)
+<details>
+<summary>Click to view manual deployment</summary>
+<br>
+
+*Note: The node map does  need to be on the same server as the API node*
 
 This project provides a web application for displaying information about cryptocurrency coin daemon nodes using RPC. It visualizes node data on a OpenStreetMap and displays detailed information in a table format. The project is built with Node.js and uses PureCSS for styling.
 
@@ -22,12 +23,34 @@ This project provides a web application for displaying information about cryptoc
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
+- Ubuntu >= 20.04
 - You have installed Node.js 12+ and npm 6+.
 - You have a basic understanding of JavaScript and Node.js.
 - You have a cryptocurrency daemon node can accessible via RPC.
 - You have a IPinfo.io token or something else.
 - You have a Reverse Proxy and web server. (Recommend Nginx)
 
+## nvm install
+   ```bash
+   sudo apt-get update
+   cd && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.9/install.sh | bash
+
+   vim /etc/profile
+   ```
+Append at the end of the file
+   ```bash
+   export NVM_DIR="$HOME/.nvm"
+   [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+   [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+   ```
+Then `:wq` save and re source the file
+   ```bash
+   source /etc/profile
+   ```
+## Nodejs install
+   ```bash
+   nvm install v12.14.0
+   ```
 ## Installing Node Map
 
 To install Node Map, follow these steps:
@@ -78,69 +101,80 @@ or
 
 Open your web browser and navigate to `http://localhost:3000` to view nodemap.
 
-## Publish on the Internet
+# Optional Settings
 
-### Set up reverse proxy and wev server e.g. Nginx
-   ```nginx.conf
+## PM2 settings
+
+PM2 is an excellent Node process management tool that can help applications automatically restart after a crash.
+
+### PM2 install
+
+   npm install pm2 -g
+
+### Start web wallet
+
+Stop the web wallet first, then use this command to start
+
+   cd sugarchain-nodemap
+   pm2 start ./bin/www --name sugarchain-nodemap
+
+### View project information
+
+   pm2 info sugarchain-nodemap
+
+### View resource usage
+
+   pm2 monit
+
+
+
+## Domain settings
+
+### Point domain to your server
+
+### Install Nginx
+
+   sudo apt-get update
+   sudo apt install nginx -y
+   
+### Create nginx config (replace map.example.com with your domain)
+
+   sudo unlink /etc/nginx/sites-enabled/map.example.com.conf
+   rm -rf /etc/nginx/sites-available/map.example.com.conf
+   sudo vim /etc/nginx/sites-available/map.example.com.conf
+   
+Write the following content (replace map.example.com with your domain)
+   
    server {
-       listen                  443 ssl http2;
-       listen                  [::]:443 ssl http2;
-       server_name             nodemap.exaple.com;
-       root                    /path/to/nodemap/public;
+      server_name map.example.com;
 
-       # SSL
-       ssl_certificate         /etc/letsencrypt/live/exaple.com/fullchain.pem;
-       ssl_certificate_key     /etc/letsencrypt/live/exaple.com/privkey.pem;
-       ssl_trusted_certificate /etc/letsencrypt/live/exaple.com/chain.pem;
+      location / {
+         proxy_pass http://localhost:3000;
+         proxy_http_version 1.1;
+         proxy_set_header Upgrade $http_upgrade;
+         proxy_set_header Connection 'upgrade';
+         proxy_set_header Host $host;
+         proxy_cache_bypass $http_upgrade;
+      }
 
-       # logging
-       access_log              /var/log/nginx/access.log combined buffer=512k flush=1m;
-       error_log               /var/log/nginx/error.log warn;
+      listen 80;
+   }
 
-       # reverse proxy
-       location / {
-           proxy_pass                         http://127.0.0.1:3000;
-           proxy_set_header Host              $host;
-           proxy_http_version                 1.1;
-           proxy_cache_bypass                 $http_upgrade;
+### Activate nginx config (replace map.example.com with your domain)
 
-           # Proxy SSL
-           proxy_ssl_server_name              on;
+   sudo ln -s /etc/nginx/sites-available/map.example.com.conf /etc/nginx/sites-enabled
+   
+### Install certbot for ssl certificate
 
-           # Proxy headers
-           proxy_set_header Upgrade           $http_upgrade;
-           proxy_set_header Connection        $connection_upgrade;
-           proxy_set_header X-Real-IP         $remote_addr;
-           proxy_set_header Forwarded         $proxy_add_forwarded;
-           proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-           proxy_set_header X-Forwarded-Proto $scheme;
-           proxy_set_header X-Forwarded-Host  $host;
-           proxy_set_header X-Forwarded-Port  $server_port;
+   sudo apt install snapd -y
+   sudo snap install --classic certbot
+   
+### Obtain certificate (replace map.example.com with your domain)
 
-           # Proxy timeouts
-           proxy_connect_timeout              60s;
-           proxy_send_timeout                 60s;
-           proxy_read_timeout                 60s;
-       }      
-   ```
-[nginxconfig.io](https://www.digitalocean.com/community/tools/nginx) This site is useful to setup Nginx!
+   sudo certbot --nginx -d map.example.com
+   
+After that web map should be accessible via domain you pointed 
 
-### start reverse proxy and web server
-   ```
-   sudo systemctl start nginx
-   sudo systemctl enable nginx
-   ```
-Accessing example.com will show nodemap.
+</details>
 
-## Contributing to Node Map
-
-To contribute to Node Map, follow these steps:
-
-1. Fork this repository.
-2. Create a branch: `git checkout -b <branch_name>`.
-3. Make your changes and commit them: `git commit -m '<commit_message>'`
-4. Push to the original branch: `git push origin <project_name>/<location>`
-5. Create the pull request.
-
-Alternatively, see the GitHub documentation on [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
 
