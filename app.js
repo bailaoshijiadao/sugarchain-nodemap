@@ -159,6 +159,7 @@ function formatOrg(org) {
 // Endpoint to serve peer location data
 async function updatePeerLocations() {
     try {
+        node_number = 0;
         const peers = await fetchPeerInfo();
         const networkInfo = await fetchNetworkInfo();
         const miningInfo = await fetchMiningInfo();
