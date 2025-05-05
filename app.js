@@ -12,6 +12,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const cache = new NodeCache({ stdTTL: 3600 }); // Setup cache TTL set for 60 minutes
 let lastCacheUpdateTime = null;
+let node_number = 0;
 
 // Validates essential environment variables are set
 const requiredVars = ['DAEMON_RPC_HOST', 'IPINFO_TOKEN'];
@@ -167,6 +168,8 @@ async function updatePeerLocations() {
             const ip = extractIp(peer.addr);
             if (isLocalAddress(ip)) {
                 return null;
+            }else{
+                node_number += 1;
             }
 
             const geoInfo = await getGeoLocation(ip) || {};
@@ -189,6 +192,7 @@ async function updatePeerLocations() {
             const geoInfo = await getGeoLocation(addr.address) || {};
             const dnsLookup = await reverseDnsLookup(addr.address) || '';
             const orgInfo = formatOrg(geoInfo.org);
+            node_number += 1;
 
             return {
                 ip: `${ip}<br><span class="text-light">${dnsLookup}</span>`,
@@ -206,7 +210,7 @@ async function updatePeerLocations() {
         cache.set('peer-locations', combinedLocations);
         const now = new Date();
         lastCacheUpdateTime = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-        console.log(`Peer locations updated and cached at ${lastCacheUpdateTime}.`)
+        console.log(`Peer locations updated and cached at ${lastCacheUpdateTime}.  Number ${node_number}`)
     } catch (error) {
         console.error('Failed to fetch peer locations:', error)
     }
@@ -222,7 +226,8 @@ app.get('/peer-locations', async (req, res) => {
         if (locations) {
             res.json({
                 locations: locations,
-                lastUpdated: lastCacheUpdateTime
+                lastUpdated: lastCacheUpdateTime,
+                nodeNumber: node_number
             })
         }
     } catch (error) {
