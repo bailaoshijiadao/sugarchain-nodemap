@@ -108,24 +108,24 @@ Open your web browser and navigate to `http://localhost:3000` to view nodemap.
 PM2 is an excellent Node process management tool that can help applications automatically restart after a crash.
 
 ### PM2 install
-
+   ```bash
    npm install pm2 -g
+   ```
+### Start web map
 
-### Start web wallet
-
-Stop the web wallet first, then use this command to start
-
+Stop the web map first, then use this command to start
+   ```bash
    cd sugarchain-nodemap
    pm2 start ./bin/www --name sugarchain-nodemap
-
+   ```
 ### View project information
-
+   ```bash
    pm2 info sugarchain-nodemap
-
+   ```
 ### View resource usage
-
+   ```bash
    pm2 monit
-
+   ```
 
 
 ## Domain settings
@@ -133,18 +133,18 @@ Stop the web wallet first, then use this command to start
 ### Point domain to your server
 
 ### Install Nginx
-
+   ```bash
    sudo apt-get update
    sudo apt install nginx -y
-   
+   ```
 ### Create nginx config (replace map.example.com with your domain)
-
+   ```bash
    sudo unlink /etc/nginx/sites-enabled/map.example.com.conf
    rm -rf /etc/nginx/sites-available/map.example.com.conf
    sudo vim /etc/nginx/sites-available/map.example.com.conf
-   
+   ```
 Write the following content (replace map.example.com with your domain)
-   
+   ```bash
    server {
       server_name map.example.com;
 
@@ -159,20 +159,20 @@ Write the following content (replace map.example.com with your domain)
 
       listen 80;
    }
-
+   ```
 ### Activate nginx config (replace map.example.com with your domain)
-
+   ```bash
    sudo ln -s /etc/nginx/sites-available/map.example.com.conf /etc/nginx/sites-enabled
-   
+   ```
 ### Install certbot for ssl certificate
-
+   ```bash
    sudo apt install snapd -y
    sudo snap install --classic certbot
-   
+   ```
 ### Obtain certificate (replace map.example.com with your domain)
-
+   ```bash
    sudo certbot --nginx -d map.example.com
-   
+   ```
 After that web map should be accessible via domain you pointed 
 
 </details>
