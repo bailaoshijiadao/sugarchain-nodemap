@@ -141,7 +141,7 @@
             fetch('/peer-locations')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('lastUpdated').textContent = data.lastUpdated;
+                    document.getElementById('lastUpdated').textContent = `${data.lastUpdated}. Number ${data.nodeNumber}`;
                     populateTable(data.locations);
                     placeMarkers(data.locations);
                 })
